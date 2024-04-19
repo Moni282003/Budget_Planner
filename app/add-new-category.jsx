@@ -7,10 +7,12 @@ import { FontAwesome } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { supabase } from '../util/SupaBase';
 import { client } from '../util/Kinde';
+import { useRouter } from 'expo-router';
 
 export default function Addnewcategory() {
+  const router=useRouter();
   const [selected, setSelected] = useState('IC');
-  const [selectedColor, setSelectedColor] = useState('#8B42FC'); // Initial selected color
+  const [selectedColor, setSelectedColor] = useState('#8B42FC'); 
   const [categoryName,setCategoryName]=useState()
   const [totalBudget,setTotalBudget]=useState()
   // Callback function to update selected color
@@ -29,6 +31,12 @@ export default function Addnewcategory() {
     }]).select();
     console.log(data)
     if(data){
+        router.replace({
+          pathname:'/Category-details',
+          params:{
+            categoryId:data[0].id,
+          }
+        })
         ToastAndroid.show('Category Created!',ToastAndroid.SHORT)
     }
  }

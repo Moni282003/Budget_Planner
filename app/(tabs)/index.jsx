@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, ActivityIndicator, RefreshControl } from 'react-native';
 import services from '../../util/services';
 import { useRouter } from 'expo-router';
 import { client } from '../../util/Kinde';
@@ -9,11 +9,13 @@ import Header from '../../components/Header';
 import CricularChart from '../../components/CricularChart';
 import { Link } from 'expo-router';
 import CategoryList from '../../components/CategoryList';
+import { ScrollView } from 'react-native';
 
 
 export default function Home() {
+  const [loading,setLoading]=useState(false)
   const router = useRouter();
-  
+  const [categoryList,setCategoryList]=useState()
   useEffect(() => {
     checkUserAuth();
     getcategoryList()
@@ -34,10 +36,12 @@ export default function Home() {
     }
   };
   const getcategoryList =async()=>{
-    const user=await client.getUserDetails()
-   const {data,error}=await supabase.from('Category').select('*').eq('created_by',user.email)
-  console.log(user.email)
+    setLoading(true)
+  const user=await client.getUserDetails()
+   const {data,error}=await supabase.from('Category').select('*,CategoryItems(*)').eq('created_by',user.email)
    console.log("Data",data)
+   setCategoryList(data)
+   data&&setLoading(false)
   }
   return (
     <View
@@ -46,15 +50,26 @@ export default function Home() {
       flex:1
     }}
     >
+      <ScrollView
+      refreshControl={
+        <RefreshControl
+        onRefresh={()=>getcategoryList()}
+        refreshing={loading}
+        />
+      }
+      >
     <View style={{marginTop:30,
     padding:20,
     backgroundColor:'#8B42FC',
     height:150
     }}>
-      <Header/>
+      <Header/></View>
+      <View style={{
+        padding:20,marginTop:-75
+      }}>
       <CricularChart/>
-      <CategoryList/>
-    </View> 
+      <CategoryList categoryList={categoryList} /></View>
+     </ScrollView>
     <Link href={'/add-new-category'}  style={{
       position:"absolute",
       bottom:16,
