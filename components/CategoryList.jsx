@@ -18,7 +18,13 @@ const OnCategoryClick=(category)=>{
   )
 }
 
-
+const CalcTotalCost=(categoryItems)=>{
+  let totalcost=0
+  categoryItems.forEach(item=>{
+    totalcost=totalcost+item.cost
+  })
+  return totalcost
+}
 
   if (!categoryList || categoryList.length === 0) {
     // If categoryList is empty or undefined, return a message or null
@@ -79,7 +85,7 @@ const OnCategoryClick=(category)=>{
                   </Text>
                 </View>
                 <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-                  ${category.assigned_budget}
+                  ${CalcTotalCost(category?.CategoryItems)}
                 </Text>
               </View>
             </View>

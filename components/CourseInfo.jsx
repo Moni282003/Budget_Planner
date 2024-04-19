@@ -1,11 +1,13 @@
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { supabase } from '../util/SupaBase';
+import { router, useRouter } from 'expo-router';
 
 export default function CourseInfo({ categoryData }) {
     const [totalCost, setTotalCost] = useState(0);
     const [perc, setPerc] = useState(0);
-
+   const router= useRouter();
     useEffect(() => {
         calcTotalPerc();
     }, [categoryData]);
@@ -18,9 +20,32 @@ export default function CourseInfo({ categoryData }) {
             total += item.cost;
         });
         setTotalCost(total);
-
+        
         let percentage = (total / categoryData.assigned_budget) * 100;
+        if(percentage > 100) {
+            percentage = 100;
+        }
         setPerc(percentage);
+    }
+
+    const onDeleteCategory = () => {
+        Alert.alert('Are you Sure', 'Do you really want to delete?', [
+            {
+                text: 'Cancel',
+                style: "cancel"
+            },
+            {
+                text: 'Yes',
+                style: "destructive",
+                onPress: async () => {
+                    const { error } = await supabase.from('CategoryItems').delete().eq('category_id', categoryData.id);
+                    await supabase.from('Category').delete().eq('id', categoryData.id);
+                    ToastAndroid.show('Category Deleted', ToastAndroid.SHORT);
+                    router.replace('/(tabs)')
+
+                }
+            }
+        ]);
     }
 
     return (
@@ -53,7 +78,9 @@ export default function CourseInfo({ categoryData }) {
                         </Text>
                     </View>
                 </View>
-                <Ionicons name="trash" size={24} color="red" />
+                <TouchableOpacity onPress={() => onDeleteCategory()}>
+                    <Ionicons name="trash" size={24} color="red" />
+                </TouchableOpacity>
             </View>
             <View style={{ display: "flex", justifyContent: "space-between", marginTop: 15, flexDirection: 'row' }}>
                 <Text>${totalCost}</Text>

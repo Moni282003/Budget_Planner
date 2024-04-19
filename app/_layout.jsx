@@ -7,7 +7,7 @@ export default function HomeLayout() {
       screenOptions={{
         headerShown:false
       }}
-    >
+    > 
     <Stack.Screen name='(tabs)'
     options={{
       headerShown:false
@@ -19,6 +19,14 @@ export default function HomeLayout() {
       headerTitle:"Add New Category"
     }}
     />
+    <Stack.Screen name='add-new-category-item'
+    options={{
+      presentation:'modal',
+      headerShown:true,
+      headerTitle:"Add New Category Item"
+    }}
+    />
+    
     </Stack>
   );
 }

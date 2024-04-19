@@ -67,7 +67,7 @@ export default function Home() {
       <View style={{
         padding:20,marginTop:-75
       }}>
-      <CricularChart/>
+      <CricularChart categoryList={categoryList}/>
       <CategoryList categoryList={categoryList} /></View>
      </ScrollView>
     <Link href={'/add-new-category'}  style={{
